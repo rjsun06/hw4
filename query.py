@@ -33,9 +33,10 @@ def get_results():
         .agg(spark_sum("clicks").alias("clicks"))\
         .withColumn("domain_priority", extract_domain_type(col("url")))\
         .orderBy(col("clicks").desc(), col("domain_priority").asc())
-    
     results = {row.url: row.clicks for row in result_df.collect()}
-    return jsonify({"results": results})
+    app.json.sort_keys = False
+    results = dict(sorted(results.items(), key=lambda item: item[l], reverse=True)
+    return jsonify("results": results} )
 
 @app.route('/trends', methods=['POST'])
 def get_trends():
